@@ -1,10 +1,10 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
-    Frame, layout::Rect, style::{Color, Modifier, Style}, widgets::{List, ListItem}
+    Frame, layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders, Paragraph, Row, Table, TableState}
 };
 use anyhow::{Context, Result};
 use serde::Deserialize;
-use std::process::Command;
+use std::{path::Path, process::Command};
 
 use crate::{config::Config, screen::{Action, Screen}};
 
@@ -18,7 +18,7 @@ pub struct Disk {
 #[derive(Debug, PartialEq, Clone)]
 pub struct DiskScreen {
     pub disks: Vec<Disk>,
-    pub selected: usize,
+    pub table_state: TableState
 }
 
 #[derive(Deserialize)]
@@ -28,9 +28,14 @@ struct LsblkOutput {
 
 impl DiskScreen {
     pub fn new(disks: Vec<Disk>) -> Self {
+        let mut table_state = TableState::default();
+        if !disks.is_empty() {
+            table_state.select(Some(0));
+        }
+
         Self {
             disks,
-            selected: 0,
+            table_state,
         }
     }
     
@@ -46,45 +51,84 @@ impl DiskScreen {
     
         let parsed: LsblkOutput = serde_json::from_slice(&output.stdout)
             .context("Failed to parse lsblk")?;
-        Ok(parsed.blockdevices)
+        Ok(
+            parsed
+            .blockdevices
+            .into_iter()
+            .filter(
+                |d| Path::new("/sys/block")
+                    .join(&d.name)
+                    .join("device")
+                    .exists()
+            )
+            .collect()
+        )
     }
 }
 
 impl Screen for DiskScreen {
-    fn render(&self, frame: &mut Frame, area: Rect, _config: &Config) {
-        let items: Vec<ListItem> = self
-            .disks
-            .iter()
-            .enumerate()
-            .map(|(i, disk)| {
-                let style = if i == self.selected {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-                } else {
-                    Style::default().fg(Color::White)
-                };
-                let prefix = if i == self.selected { "-> " } else { "   " };
-                ListItem::new(format!("{prefix}{} - {} ({})", disk.name, disk.size, disk.model.as_deref().unwrap_or("-"))).style(style)
-            })
-            .collect();
-    
-        let list = List::new(items);
-        frame.render_widget(list, area);
+    fn render(&mut self, frame: &mut Frame, area: Rect, _config: &Config) {
+        let table_height = self.disks.len() as u16 + 2 + 2;
+        let [text_area, table_area, footer_area] = Layout::vertical([
+            Constraint::Length(3),
+            Constraint::Length(table_height),
+            Constraint::Min(0),
+        ])
+        .areas(area);
+
+        let text = Paragraph::new("DISK PARTITIONING\nSelect a disk to partition and install VybeOS.");
+        frame.render_widget(text, text_area);
+
+        let header = Row::new(["Device", "Size", "Model"])
+            .style(Style::default().add_modifier(Modifier::BOLD)).bottom_margin(1);
+
+        let rows: Vec<Row> = self.disks.iter().map(|disk| {
+            Row::new([disk.name.clone(), disk.size.clone(), disk.model.as_deref().unwrap_or("-").to_string()])
+        }).collect();
+
+        let widths = [
+            Constraint::Percentage(33),
+            Constraint::Percentage(33),
+            Constraint::Percentage(33),
+        ];
+
+        let table = Table::new(rows, widths)
+            .header(header)
+            .column_spacing(1)
+            .row_highlight_style(Style::default().fg(Color::Cyan))
+            .highlight_symbol("-> ")
+            .block(Block::default().borders(Borders::ALL));
+        frame.render_stateful_widget(table, table_area, &mut self.table_state);
+
+        let [_, footer_area] = Layout::vertical([
+            Constraint::Min(0),
+            Constraint::Length(1),
+        ])
+        .areas(footer_area);
+
+        let footer = Paragraph::new("[WARNING] All data in the selected disk will be lost.")
+            .style(Style::default().fg(Color::Yellow));
+
+        frame.render_widget(footer, footer_area);
     }
 
-    fn handle_key(&mut self, key: KeyEvent, _config: &mut Config) -> Action {
+    fn handle_key(&mut self, key: KeyEvent, config: &mut Config) -> Action {
         match key.code {
-            KeyCode::Up if self.selected > 0 => {
-                self.selected -= 1;
+            KeyCode::Up => {
+                self.table_state.select_previous();
                 Action::None
             }
-            KeyCode::Down if self.selected < self.disks.len() - 1 => {
-                self.selected += 1;
+            KeyCode::Down => {
+                self.table_state.select_next();
                 Action::None
             }
             KeyCode::Enter => {
-                // Here you would typically proceed to the next screen, e.g., partitioning or installation.
-                // For now, we just quit for demonstration purposes.
-                Action::Quit
+                if let Some(i) = self.table_state.selected() {
+                    config.disk = self.disks.get(i).map(|d| d.name.clone());
+                    return Action::Quit;
+                } else {
+                    Action::None
+                }
             }
             KeyCode::Esc => Action::Quit,
             _ => Action::None,

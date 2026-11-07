@@ -1,5 +1,5 @@
 use ratatui::{
-    Frame, layout::{Alignment, Constraint, Layout}, style::{Color, Style}, widgets::{Block, Borders, List, ListItem, Paragraph}
+    Frame, layout::{Alignment, Constraint, Layout}, style::{Color, Style}, widgets::{Block, Borders, List, ListItem, Padding, Paragraph}
 };
 use crate::{config::Config, screen::{Action, Screen}, screens::{welcome_screen::WelcomeScreen}};
 
@@ -31,7 +31,7 @@ impl App {
         false
     }
 
-    pub fn render_ui(frame: &mut Frame, app: &App) {
+    pub fn render_ui(frame: &mut Frame, app: &mut App) {
         let [body_area, footer_area] = Layout::vertical([
             Constraint::Min(0),
             Constraint::Length(3),
@@ -55,8 +55,9 @@ impl App {
         let steps = vec![
             "Welcome",
             "Partitions",
-            "User Setup",
             "System Config",
+            "User Setup",
+            "Timezone & Locale",
             "Summary",
             "Installing"
         ];
@@ -65,7 +66,7 @@ impl App {
             .enumerate()
             .map(|(i, step)| {
                 let style = if i + 1 == app.step {
-                    Style::default().fg(Color::Yellow).add_modifier(ratatui::style::Modifier::BOLD)
+                    Style::default().fg(Color::Cyan).add_modifier(ratatui::style::Modifier::BOLD)
                 } else if i + 1 < app.step {
                     Style::default().fg(Color::DarkGray)
                 } else {
@@ -80,8 +81,13 @@ impl App {
             .block(Block::default().borders(Borders::RIGHT))
             .highlight_style(Style::default().add_modifier(ratatui::style::Modifier::BOLD));
 
+        let content = Block::default()
+            .padding(Padding::new(2, 2, 1, 1));
+        let inner_content = content.inner(content_area);
+        frame.render_widget(content, content_area);
+
         frame.render_widget(navigation, navigation_area);
-        app.screen.render(frame, content_area, &app.config);
+        app.screen.render(frame, inner_content, &app.config);
 
         let footer = Paragraph::new(app.screen.footer_hints())
             .style(Style::default().fg(Color::DarkGray))

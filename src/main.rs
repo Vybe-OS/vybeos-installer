@@ -23,7 +23,7 @@ fn run(terminal: &mut DefaultTerminal) -> anyhow::Result<()> {
     let mut app = App::new();
 
     loop {
-        terminal.draw(|frame| App::render_ui(frame, &app))?;
+        terminal.draw(|frame| App::render_ui(frame, &mut app))?;
 
         if event::poll(std::time::Duration::from_millis(10))? {
             if let Event::Key(key) = event::read()? {

@@ -9,7 +9,7 @@ pub enum Action {
 }
 
 pub trait Screen {
-    fn render(&self, frame: &mut Frame, area: Rect, config: &Config);
+    fn render(&mut self, frame: &mut Frame, area: Rect, config: &Config);
     fn handle_key(&mut self, key: KeyEvent, config: &mut Config) -> Action;
     fn footer_hints(&self) -> &str;
     fn tick(&mut self) -> Action {

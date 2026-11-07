@@ -6,7 +6,7 @@ use crate::{config::Config, screen::{Action, Screen}, screens::disk_screen::Disk
 pub struct WelcomeScreen;
 
 impl Screen for WelcomeScreen {
-    fn render(&self, frame: &mut Frame, area: Rect, _config: &Config) {
+    fn render(&mut self, frame: &mut Frame, area: Rect, _config: &Config) {
         let ascii_logo = include_str!("../assets/logo.txt");
         let logo_lines = ascii_logo.lines().count() as u16;
 
