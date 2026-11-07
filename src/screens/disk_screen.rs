@@ -1,9 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
-    layout::{Rect},
-    style::{Color, Modifier, Style},
-    widgets::{Block, Borders, List, ListItem},
-    Frame
+    Frame, layout::Rect, style::{Color, Modifier, Style}, widgets::{List, ListItem}
 };
 use anyhow::{Context, Result};
 use serde::Deserialize;
@@ -70,11 +67,7 @@ impl Screen for DiskScreen {
             })
             .collect();
     
-        let list = List::new(items).block(
-            Block::default()
-                .title(" Step 2: Select Target Drive ")
-                .borders(Borders::ALL),
-        );
+        let list = List::new(items);
         frame.render_widget(list, area);
     }
 
@@ -93,12 +86,12 @@ impl Screen for DiskScreen {
                 // For now, we just quit for demonstration purposes.
                 Action::Quit
             }
-            KeyCode::Char('q') => Action::Quit,
+            KeyCode::Esc => Action::Quit,
             _ => Action::None,
         }
     }
 
     fn footer_hints(&self) -> &str {
-        "Use [UP]/[DOWN] to navigate, [ENTER] to select, [q] to quit"
+        "[↑/↓] Navigate    [ENTER] Select    [ESC] Quit"
     }
 }
