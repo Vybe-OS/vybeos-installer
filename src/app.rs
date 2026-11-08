@@ -54,10 +54,10 @@ impl App {
 
         let steps = vec![
             "Welcome",
+            "Locale & Timezone",
             "Partitions",
             "System Config",
             "User Setup",
-            "Timezone & Locale",
             "Summary",
             "Installing"
         ];

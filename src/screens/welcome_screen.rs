@@ -2,7 +2,7 @@ use ratatui::{
     Frame, crossterm::event::{KeyCode, KeyEvent}, layout::{Alignment, Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style}, widgets::{Paragraph, Wrap}
 };
 
-use crate::{config::Config, screen::{Action, Screen}, screens::disk_screen::DiskScreen};
+use crate::{config::Config, screen::{Action, Screen}, screens::{locale_timezone_screen::LocaleTimezoneScreen}};
 pub struct WelcomeScreen;
 
 impl Screen for WelcomeScreen {
@@ -33,9 +33,10 @@ impl Screen for WelcomeScreen {
     }
 
     fn handle_key(&mut self, key: KeyEvent, _config: &mut Config) -> Action {
-        let disk = DiskScreen::list_disks().unwrap_or_default();
+        let locales = LocaleTimezoneScreen::list_locales().unwrap_or_default();
+        let timezones = LocaleTimezoneScreen::list_timezones().unwrap_or_default();
         match key.code {
-            KeyCode::Enter => Action::Goto(Box::new(DiskScreen::new(disk))),
+            KeyCode::Enter => Action::Goto(Box::new(LocaleTimezoneScreen::new(locales, timezones))),
             KeyCode::Esc => Action::Quit,
             _ => Action::None,
         }
