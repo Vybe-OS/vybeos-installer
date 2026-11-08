@@ -197,6 +197,6 @@ impl Screen for LocaleTimezoneScreen {
     }
 
     fn footer_hints(&self) -> &str {
-        "[↑/↓] Navigate    [ENTER] Select    [ESC] Quit"
+        "[↑/↓] Navigate    [TAB/←/→] Switch Table    [ENTER] Next Step    [ESC] Quit"
     }
 }
