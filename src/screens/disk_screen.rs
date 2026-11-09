@@ -6,7 +6,7 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::{path::Path, process::Command};
 
-use crate::{config::Config, screen::{Action, Screen}};
+use crate::{config::Config, screen::{Action, Screen}, screens::system_config_screen::SystemConfigScreen};
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Disk {
@@ -125,7 +125,7 @@ impl Screen for DiskScreen {
             KeyCode::Enter => {
                 if let Some(i) = self.table_state.selected() {
                     config.disk = self.disks.get(i).map(|d| d.name.clone());
-                    return Action::Quit;
+                    return Action::Goto(Box::new(SystemConfigScreen::new()));
                 } else {
                     Action::None
                 }

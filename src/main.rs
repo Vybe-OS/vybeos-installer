@@ -2,6 +2,7 @@ mod app;
 mod config;
 mod screen;
 mod screens;
+mod components;
 
 use crossterm::{
     event::{self, Event, KeyEventKind},
