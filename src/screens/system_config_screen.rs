@@ -1,7 +1,7 @@
 use crossterm::{event::{KeyCode, KeyEvent}};
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Style}, widgets::Paragraph};
 
-use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}};
+use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}, screens::user_screen::UserConfigScreen};
 
 pub struct SystemConfigScreen {
     pub fields: [InputState; 1],
@@ -47,16 +47,7 @@ impl Screen for SystemConfigScreen {
             return Action::None;
         }
 
-        let n = self.fields.len();
         match key.code {
-            KeyCode::Tab | KeyCode::Down => {
-                self.focus = (self.focus + 1) % n;
-                return Action::None;
-            },
-            KeyCode::BackTab | KeyCode::Up => {
-                self.focus = (self.focus + n - 1) % n;
-                return Action::None;
-            },
             KeyCode::Enter => {
                 let [hostname] = &self.fields;
                 if hostname.value().is_empty() {
@@ -64,7 +55,7 @@ impl Screen for SystemConfigScreen {
                     return Action::None;
                 } else {
                     config.hostname = Some(hostname.value().to_owned());
-                    return Action::Quit;
+                    return Action::Goto(Box::new(UserConfigScreen::new()));
                 }
             }
             KeyCode::Esc => Action::Quit,
