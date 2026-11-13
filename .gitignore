@@ -1,1 +1,7 @@
-/target
+# Rust build artifacts
+/target/
+
+# Arch Linux makepkg build artifacts
+/packaging/arch/pkg/
+/packaging/arch/src/
+/packaging/arch/*.pkg.tar.zst*

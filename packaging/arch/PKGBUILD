@@ -1,0 +1,27 @@
+pkgname=vybeos-installer
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="TUI installer for VybeOS"
+arch=('x86_64')
+url="https://github.com/Vybe-OS/vybeos-installer"
+license=('MIT')
+depends=('gcc-libs' 'glibc' 'parted' 'arch-install-scripts')
+makedepends=('cargo' 'git')
+
+prepare() {
+    cd "$startdir/../.."
+    export RUSTUP_TOOLCHAIN=stable
+    cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
+}
+
+build() {
+    cd "$startdir/../.."
+    export RUSTUP_TOOLCHAIN=stable
+    export CARGO_TARGET_DIR=target
+    cargo build --frozen --release --all-features
+}
+
+package() {
+    cd "$startdir/../.."
+    install -Dm0755 "target/release/$pkgname" "$pkgdir/usr/bin/$pkgname"
+}
