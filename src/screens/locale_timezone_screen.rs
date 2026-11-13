@@ -4,7 +4,7 @@ use anyhow::{Result, Context};
 use crossterm::event::KeyCode;
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Modifier, Style}, widgets::{Block, Borders, Paragraph, Row, Table, TableState}};
 
-use crate::{config::Config, screen::{Action, Screen}, screens::disk_screen::DiskScreen};
+use crate::{core::config::Config, core::screen::{Action, Screen}, screens::disk_screen::DiskScreen};
 
 #[derive(Debug, Clone, PartialEq)]
 enum TableStateFocus {
@@ -86,7 +86,7 @@ impl LocaleTimezoneScreen {
 }
 
 impl Screen for LocaleTimezoneScreen {
-    fn render(&mut self, frame: &mut Frame, area: Rect, _config: &crate::config::Config) {
+    fn render(&mut self, frame: &mut Frame, area: Rect, _config: &Config) {
         let [text_area, table_area] = Layout::vertical([
             Constraint::Length(3),
             Constraint::Min(1)

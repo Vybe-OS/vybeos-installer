@@ -1,6 +1,6 @@
 use crossterm::event::KeyEvent;
 use ratatui::{Frame, layout::Rect};
-use crate::config::Config;
+use crate::core::config::Config;
 
 pub enum Action {
     None,

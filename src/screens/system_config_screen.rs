@@ -1,7 +1,7 @@
 use crossterm::{event::{KeyCode, KeyEvent}};
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Style}, widgets::Paragraph};
 
-use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}, screens::user_screen::UserConfigScreen};
+use crate::{components::input::{Input, InputState}, core::config::Config, core::screen::{Action, Screen}, screens::user_screen::UserConfigScreen};
 
 pub struct SystemConfigScreen {
     pub fields: [InputState; 1],

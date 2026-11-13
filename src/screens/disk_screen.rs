@@ -6,7 +6,7 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::{path::Path, process::Command};
 
-use crate::{config::Config, screen::{Action, Screen}, screens::system_config_screen::SystemConfigScreen};
+use crate::{core::config::Config, core::screen::{Action, Screen}, screens::system_config_screen::SystemConfigScreen};
 
 #[derive(Debug, PartialEq, Clone, Deserialize)]
 pub struct Disk {

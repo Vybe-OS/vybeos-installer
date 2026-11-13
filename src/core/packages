@@ -1,0 +1,25 @@
+# base
+base
+linux
+linux-firmware
+btrfs-progs
+dosfstools
+amd-ucode
+intel-ucode
+sudo
+nano
+efibootmgr
+zram-generator
+
+# vybeos
+sway
+waybar
+greetd
+networkmanager
+polkit
+docker
+docker-compose
+base-devel
+git
+zip
+opencode

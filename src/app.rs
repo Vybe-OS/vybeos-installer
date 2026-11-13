@@ -1,7 +1,7 @@
 use ratatui::{
     Frame, layout::{Alignment, Constraint, Layout}, style::{Color, Style}, widgets::{Block, Borders, List, ListItem, Padding, Paragraph}
 };
-use crate::{config::Config, screen::{Action, Screen}, screens::{welcome_screen::WelcomeScreen}};
+use crate::{core::config::Config, core::screen::{Action, Screen}, screens::{welcome_screen::WelcomeScreen}};
 
 pub struct App {
     pub screen: Box<dyn Screen>,

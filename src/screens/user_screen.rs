@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Style}, widgets::{Block, Paragraph}};
 
-use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}, screens::{summary_screen::SummaryScreen}};
+use crate::{components::input::{Input, InputState}, core::config::Config, core::screen::{Action, Screen}, screens::{summary_screen::SummaryScreen}};
 
 #[derive(Clone, Copy, PartialEq)]
 enum FocusField {

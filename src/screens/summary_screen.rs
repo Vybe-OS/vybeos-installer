@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Style}, widgets::{Block, Borders, Padding, Paragraph}};
 
-use crate::{config::Config, screen::{Action, Screen}};
+use crate::{core::{config::Config, screen::{Action, Screen}}, screens::installation_screen::InstallationScreen};
 
 pub struct SummaryScreen {}
 
@@ -50,7 +50,7 @@ impl Screen for SummaryScreen {
 
     fn handle_key(&mut self, key: KeyEvent, _config: &mut Config) -> Action {
         match key.code {
-            KeyCode::Enter => Action::Quit,
+            KeyCode::Enter => Action::Goto(Box::new(InstallationScreen::new(_config.validate().expect("Invalid configuration")))),
             KeyCode::Esc => Action::Quit,
             _ => Action::None,
         }

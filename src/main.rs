@@ -1,6 +1,5 @@
 mod app;
-mod config;
-mod screen;
+mod core;
 mod screens;
 mod components;
 

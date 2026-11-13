@@ -2,7 +2,7 @@ use ratatui::{
     Frame, crossterm::event::{KeyCode, KeyEvent}, layout::{Alignment, Constraint, Direction, Layout, Rect}, style::{Color, Modifier, Style}, widgets::{Paragraph, Wrap}
 };
 
-use crate::{config::Config, screen::{Action, Screen}, screens::{locale_timezone_screen::LocaleTimezoneScreen}};
+use crate::{core::config::Config, core::screen::{Action, Screen}, screens::{locale_timezone_screen::LocaleTimezoneScreen}};
 pub struct WelcomeScreen;
 
 impl Screen for WelcomeScreen {
