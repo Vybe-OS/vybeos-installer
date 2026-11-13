@@ -175,21 +175,11 @@ impl Screen for LocaleTimezoneScreen {
                 Action::None
             }
             KeyCode::Enter => {
-                if let Some(i) = self.active_table_state().selected() {
-                    match self.focus {
-                        TableStateFocus::Locale => {
-                            config.locale = self.locales.get(i).map(|l| l.clone());
-                        }
-                        TableStateFocus::Timezone => {
-                            config.timezone = self.timezones.get(i).map(|t| t.clone());
-                        }
-                    }
+                config.locale = self.locale_state.selected().and_then(|i| self.locales.get(i).cloned());
+                config.timezone = self.timezone_state.selected().and_then(|i| self.timezones.get(i).cloned());
 
-                    let disks = DiskScreen::list_disks().unwrap_or_default();
-                    return Action::Goto(Box::new(DiskScreen::new(disks)));
-                } else {
-                    Action::None
-                }
+                let disks = DiskScreen::list_disks().unwrap_or_default();
+                return Action::Goto(Box::new(DiskScreen::new(disks)));
             }
             KeyCode::Esc => Action::Quit,
             _ => Action::None,

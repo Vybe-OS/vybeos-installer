@@ -1,7 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{Frame, layout::{Constraint, Layout, Rect}, style::{Color, Style}, widgets::{Block, Paragraph}};
 
-use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}};
+use crate::{components::input::{Input, InputState}, config::Config, screen::{Action, Screen}, screens::{summary_screen::SummaryScreen}};
 
 #[derive(Clone, Copy, PartialEq)]
 enum FocusField {
@@ -131,7 +131,7 @@ impl Screen for UserConfigScreen {
 
                 config.username = Some(self.username.value().to_owned());
                 config.password = Some(self.password.value().to_owned());
-                Action::Goto(Box::new(crate::screens::system_config_screen::SystemConfigScreen::new()))
+                Action::Goto(Box::new(SummaryScreen::new()))
             },
             KeyCode::Esc => Action::Quit,
             _ => Action::None,
