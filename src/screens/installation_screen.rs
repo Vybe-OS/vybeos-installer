@@ -88,7 +88,7 @@ impl Screen for InstallationScreen {
 
         frame.render_widget(
             Gauge::default()
-                .block(Block::default().borders(Borders::ALL).title("Progress"))
+                .block(Block::default().borders(Borders::ALL))
                 .gauge_style(Style::default().fg(Color::Cyan))
                 .label(format!("{}%", self.progress))
                 .ratio(f64::from(self.progress) / 100.0),
