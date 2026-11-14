@@ -85,20 +85,35 @@ fn chroot(
 }
 
 impl Installer {
-    pub fn run(&self, on_log: &mut impl FnMut(&str)) -> Result<(), String> {
+    pub fn run(
+        &self,
+        on_log: &mut impl FnMut(&str),
+        on_progress: &mut impl FnMut(u16),
+    ) -> Result<(), String> {
         ensure_live_env()?;
-        let result = self.steps(on_log);
-        let _ = sh("umount", &["-R", "/mnt"], None, on_log); // sukses atau gagal
+        let result = self.steps(on_log, on_progress);
+        let _ = sh("umount", &["-R", "/mnt"], None, on_log);
         result
     }
 
-    fn steps(&self, on_log: &mut impl FnMut(&str)) -> Result<(), String> {
+    fn steps(
+        &self,
+        on_log: &mut impl FnMut(&str),
+        on_progress: &mut impl FnMut(u16),
+    ) -> Result<(), String> {
         self.partition(on_log)?;
+        on_progress(16);
         self.format_and_mount(on_log)?;
+        on_progress(33);
         self.pacstrap(on_log)?;
+        on_progress(50);
         self.genfstab(on_log)?;
+        on_progress(66);
         self.configure_in_chroot(on_log)?;
-        self.install_bootloader(on_log)
+        on_progress(83);
+        self.install_bootloader(on_log)?;
+        on_progress(100);
+        Ok(())
     }
 
     fn partition(&self, on_log: &mut impl FnMut(&str)) -> Result<(), String> {
