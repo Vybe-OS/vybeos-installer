@@ -168,6 +168,9 @@ impl Installer {
     }
 
     fn pacstrap(&self, on_log: &mut impl FnMut(&str)) -> Result<(), String> {
+        sh("systemctl", &["is-active", "--wait", "pacman-init.service"], None, on_log)?;
+        sh("pacman", &["-Sy", "--noconfirm"], None, on_log)?;
+
         let mut args: Vec<&str> = vec!["-K", "/mnt"];
         args.extend(parse_packages(PACKAGES));
         sh("pacstrap", &args, None, on_log)
