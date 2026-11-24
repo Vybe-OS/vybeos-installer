@@ -168,9 +168,6 @@ impl Installer {
     }
 
     fn pacstrap(&self, on_log: &mut impl FnMut(&str)) -> Result<(), String> {
-        sh("systemctl", &["is-active", "--wait", "pacman-init.service"], None, on_log)?;
-        sh("pacman", &["-Sy", "--noconfirm"], None, on_log)?;
-
         let mut args: Vec<&str> = vec!["-K", "/mnt"];
         args.extend(parse_packages(PACKAGES));
         sh("pacstrap", &args, None, on_log)
@@ -264,8 +261,15 @@ impl Installer {
             on_log,
         )?;
 
+        sh(
+            "tee",
+            &["-a", "/mnt/etc/pacman.conf"],
+            Some("\n[vybeos]\nInclude = /etc/pacman.d/vybeos-mirrorlist\n"),
+            on_log,
+        )?;
+
         chroot(
-            &["systemctl", "enable", "greetd", "NetworkManager", "docker", "systemd-timesyncd"],
+            &["systemctl", "enable", "greetd", "NetworkManager",  "systemd-timesyncd"],
             None,
             on_log,
         )
