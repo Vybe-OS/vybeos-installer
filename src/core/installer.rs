@@ -257,7 +257,7 @@ impl Installer {
         sh(
             "tee",
             &["/mnt/etc/greetd/config.toml"],
-            Some("[terminal]\nvt = 1\n\n[default_session]\ncommand = \"agreety --cmd sway\"\nuser = \"greeter\"\n"),
+            Some("[terminal]\nvt = 1\n\n[default_session]\ncommand = \"tuigreet --time --remember --cmd sway\"\nuser = \"greeter\"\n"),
             on_log,
         )?;
 
